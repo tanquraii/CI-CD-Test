@@ -1,0 +1,64 @@
+# This is the name of the workflow that shows up in GitHub Actions UI
+name: Django CI
+
+# Everytime you push or pull changes to the main branch, this code activates
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# A job is a set of steps, this one is called test. 
+jobs:
+  test:
+    # Use the latest version of Ubuntu as the runner environment
+    runs-on: ubuntu-latest
+
+    # Set up a PostgreSQL service (database) for Django to use
+    services:
+      postgres:
+        # Use the official PostgreSQL 13 Docker image
+        image: postgres:13
+        env:
+          POSTGRES_DB: catusers         # Name of the test database
+          POSTGRES_USER: postgres           # Username for DB access
+          POSTGRES_PASSWORD: 123   # Password for DB access
+        ports:
+          - 5432:5432                   # Make PostgreSQL available on default port
+        options: >-
+          --health-cmd pg_isready           # Wait until DB is ready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # Environment variables for Django to connect to the database
+    env:
+      DB_NAME: catusers
+      DB_USER: postgres
+      DB_PASSWORD: 123
+      DB_HOST: localhost
+
+    # Steps to run in the pipeline
+    steps:
+      # Step 1: Check out (download) your repository code
+      - uses: actions/checkout@v3
+
+      # Step 2: Set up Python version 3.10
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # Step 3: Install dependencies from requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 4: Apply Django migrations to set up the database
+      - name: Run migrations
+        run: python manage.py migrate
+
+      # Step 5: Run Django tests
+      - name: Run tests
+        run: python manage.py test
