@@ -8,6 +8,9 @@ from django.http import Http404
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
+
+#test something dude
+
 class ListCreateAPIView(APIView):
 
     authentication_classes = [JWTAuthentication]
