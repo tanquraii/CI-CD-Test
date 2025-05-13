@@ -12,6 +12,7 @@ def cat_display():
     response = requests.get("https://api.thecatapi.com/v1/images/search?limit=20&api_key=live_xiScVEjeRADlkOHb2mq2BRq0BSx7xuzj48qeLIUAYPjt3i6Za2dFXFVyn5EtLlEw")
     data = response.json()
     url = data[0]['url']
+    #OSPOIDJPOFDJSPJFSDOJPO
     return url
 
 def registration_page(request):
